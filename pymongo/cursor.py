@@ -26,7 +26,10 @@ from bson.py3compat import (iteritems,
                             string_type)
 from bson.son import SON
 from pymongo import helpers
-from pymongo.common import validate_boolean, validate_is_mapping
+from pymongo.common import (validate_boolean, validate_is_mapping,
+                            # validate_integer_or_none,
+                            validate_non_negative_integer_or_none,
+                            validate_positive_integer_or_none)
 from pymongo.errors import (AutoReconnect,
                             ConnectionFailure,
                             InvalidOperation,
@@ -104,7 +107,7 @@ class Cursor(object):
                  limit=0, no_cursor_timeout=False,
                  cursor_type=CursorType.NON_TAILABLE,
                  sort=None, allow_partial_results=False, oplog_replay=False,
-                 modifiers=None, batch_size=0, manipulate=True):
+                 modifiers=None, batchSize=None, batch_size=0, manipulate=True):
         """Create a new cursor.
 
         Should not be called directly by application developers - see
@@ -131,10 +134,11 @@ class Cursor(object):
         validate_boolean("oplog_replay", oplog_replay)
         if modifiers is not None:
             validate_is_mapping("modifiers", modifiers)
-        if not isinstance(batch_size, integer_types):
-            raise TypeError("batch_size must be an integer")
-        if batch_size < 0:
-            raise ValueError("batch_size must be >= 0")
+        batchSize = validate_positive_integer_or_none("batchSize", batchSize)
+        batch_size = validate_non_negative_integer_or_none(
+            "batch_size", batch_size)
+        if batchSize is not None:
+            batch_size = batchSize
 
         if projection is not None:
             if not projection:

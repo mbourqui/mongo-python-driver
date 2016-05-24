@@ -1083,7 +1083,7 @@ class Collection(common.BaseObject):
 
               >>> db.test.find(modifiers={"$maxTimeMS": 500})
 
-          - `batch_size` (optional): Limits the number of documents returned in
+          - `batchSize` (optional): Limits the number of documents returned in
             a single batch.
           - `manipulate` (optional): **DEPRECATED** - If True (the default),
             apply any outgoing SON manipulators before returning.
